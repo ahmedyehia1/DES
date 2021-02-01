@@ -1,4 +1,4 @@
-from ToBin import ToBin
+from Bin import ToBin
 from tables import PC2
 
 def keyGen(left,right,shift):
@@ -9,4 +9,3 @@ def keyGen(left,right,shift):
     for p in PC2:
         roundKey.append(key[p-1])
     return left, right, roundKey
-    
