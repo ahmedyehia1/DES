@@ -3,13 +3,8 @@ from Bin import ToBin,ToInt
 from Mangler import Mangler
 from keyGen import keyGen
 
-def show(mang,w=8):
-    print(len(mang))
-    for i in range(0,len(mang),w):
-        print(mang[i:i+w],sep='\n')
-
 class DES:
-    def __propagation(self,plaintext,key,direction):
+    def __propagation(self,plaintext,key,pos):
         plaintext = ToBin(plaintext)
         key = ToBin(key)
         roundKeys = []
@@ -19,7 +14,7 @@ class DES:
         lk , rk =  Pkey[:28],Pkey[28:]
         for r in range(16):
             lk , rk , roundKey = keyGen(lk,rk,SHIFT[r])
-            roundKeys.insert(direction,roundKey)
+            roundKeys.insert(pos*r,roundKey)
         roundtext = plaintext.copy()
         for i,p in enumerate(IP):
             roundtext[i] = plaintext[p-1]
@@ -33,14 +28,18 @@ class DES:
         return plaintext
 
     def Encrypt(self,plaintext,key):
-        return hex(ToInt(self.__propagation(plaintext,key,-1)))[2:].upper()
+        out = hex(ToInt(self.__propagation(plaintext,key,1)))[2:].upper()
+        out = "0" * (16-len(out)) + out
+        return out
 
     def Decrypt(self,ciphertext,key):
-        return hex(ToInt(self.__propagation(ciphertext,key,0)))[2:].upper()
+        out = hex(ToInt(self.__propagation(ciphertext,key,0)))[2:].upper()
+        out = "0" * (16-len(out)) + out
+        return out
 
 cipher = DES()
-plaintext = "0000000000000000"
-key = "FFFFFFFFFFFFFFFF"
+plaintext = "FFFFFFFFFFFFFFFF"
+key = "0000000000000000"
 ciphertext = cipher.Encrypt(plaintext,key)
 print(ciphertext)
 plaintext = cipher.Decrypt(ciphertext,key)
