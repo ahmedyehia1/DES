@@ -9,7 +9,17 @@ def show(mang,w=8):
         print(mang[i:i+w],sep='\n')
 
 class DES:
-    def __propagation(self,plaintext,roundKeys):
+    def __propagation(self,plaintext,key,direction):
+        plaintext = ToBin(plaintext)
+        key = ToBin(key)
+        roundKeys = []
+        Pkey = [0]*56
+        for i,p in enumerate(PC1):
+            Pkey[i] = key[p-1]
+        lk , rk =  Pkey[:28],Pkey[28:]
+        for r in range(16):
+            lk , rk , roundKey = keyGen(lk,rk,SHIFT[r])
+            roundKeys.insert(direction,roundKey)
         roundtext = plaintext.copy()
         for i,p in enumerate(IP):
             roundtext[i] = plaintext[p-1]
@@ -23,34 +33,14 @@ class DES:
         return plaintext
 
     def Encrypt(self,plaintext,key):
-        plaintext = ToBin(plaintext)
-        key = ToBin(key)
-        roundKeys = []
-        Pkey = [0]*56
-        for i,p in enumerate(PC1):
-            Pkey[i] = key[p-1]
-        lk , rk =  Pkey[:28],Pkey[28:]
-        for r in range(16):
-            lk , rk , roundKey = keyGen(lk,rk,SHIFT[r])
-            roundKeys.insert(-1,roundKey)
-        return hex(ToInt(self.__propagation(plaintext,roundKeys)))[2:].upper()
+        return hex(ToInt(self.__propagation(plaintext,key,-1)))[2:].upper()
 
     def Decrypt(self,ciphertext,key):
-        ciphertext = ToBin(ciphertext)
-        key = ToBin(key)
-        roundKeys = []
-        Pkey = [0]*56
-        for i,p in enumerate(PC1):
-            Pkey[i] = key[p-1]
-        lk , rk =  Pkey[:28],Pkey[28:]
-        for r in range(16):
-            lk , rk , roundKey = keyGen(lk,rk,SHIFT[r])
-            roundKeys.insert(0,roundKey)
-        return hex(ToInt(self.__propagation(ciphertext,roundKeys)))[2:].upper()
+        return hex(ToInt(self.__propagation(ciphertext,key,0)))[2:].upper()
 
 cipher = DES()
-plaintext = "abcdef1221abcdef"
-key = "0000000000000000"
+plaintext = "0000000000000000"
+key = "FFFFFFFFFFFFFFFF"
 ciphertext = cipher.Encrypt(plaintext,key)
 print(ciphertext)
 plaintext = cipher.Decrypt(ciphertext,key)
