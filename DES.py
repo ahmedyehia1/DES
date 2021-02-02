@@ -36,11 +36,3 @@ class DES:
         out = hex(ToInt(self.__propagation(ciphertext,key,0)))[2:].upper()
         out = "0" * (16-len(out)) + out
         return out
-
-cipher = DES()
-plaintext = "FFFFFFFFFFFFFFFF"
-key = "0000000000000000"
-ciphertext = cipher.Encrypt(plaintext,key)
-print(ciphertext)
-plaintext = cipher.Decrypt(ciphertext,key)
-print(plaintext)
